@@ -1,6 +1,7 @@
 import java.io.InputStreamReader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.commons.lang3.StringEscapeUtils;
 import java.util.*;
 import java.util.Properties;
 
@@ -33,6 +34,7 @@ void closeProgram(String programName)
   try {
     Runtime rt = Runtime.getRuntime();
     rt.exec("taskkill /F /IM "+programName);
+    runningProgram="";
   }
   catch(Exception e)
   {

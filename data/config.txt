@@ -1,2 +1,2 @@
-Macbook
-/Users/japhy/Downloads/testApps
+Windows Laptop
+C:\Users\alex\Desktop\testApps\
