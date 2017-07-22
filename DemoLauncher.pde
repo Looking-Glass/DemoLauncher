@@ -1,5 +1,9 @@
 import http.requests.*;
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 
+Robot robot;
 int lastUpdated=0;
 int interval=1000;
 StringList processes=new StringList();
@@ -10,6 +14,14 @@ void setup() {
   loadConfig();
   println("existing apps: "+getExistingApps());
   println("existing app names: "+getAppNames());
+  //Let's get a Robot...
+  try { 
+    robot = new Robot();
+  } 
+  catch (AWTException e) {
+    e.printStackTrace();
+    exit();
+  }
 }
 
 void draw()
@@ -60,6 +72,10 @@ void runProgram(String programName)
       {
         println("running "+apps.get(i));
         launch(apps.get(i));
+        delay(5000);
+        //tap enter to get past the resolution popup, if it's there
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.keyRelease(KeyEvent.VK_ENTER);
         runningProgram=programName;
         break;
       }

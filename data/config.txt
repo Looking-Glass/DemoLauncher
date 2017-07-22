@@ -1,2 +1,3 @@
-Windows Laptop
-C:\Users\alex\Desktop\testApps\
+dual boot laptop
+D:\\Siggraph 2017 Demos\\
+C:\\Users\\alex\\Desktop\\holoplayer one demos\
