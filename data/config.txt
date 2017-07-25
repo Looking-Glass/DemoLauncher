@@ -1,3 +1,2 @@
-dual boot laptop
-D:\\Siggraph 2017 Demos\\
-C:\\Users\\alex\\Desktop\\holoplayer one demos\
+alex
+C:\Users\alex\Desktop\Siggraph 2017 Demos
