@@ -1,8 +1,11 @@
+import controlP5.*;  
 import http.requests.*;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
+ControlP5 cp5;  
+Group buttons;
 Robot robot;
 int lastUpdated=0;
 int interval=1000;
@@ -12,8 +15,18 @@ boolean configured;
 String mode="computerName";
 boolean updating=false;
 String serverResponse="";
+int buttonWidth=700;
+int buttonHeight=100;
+int buttonSpacing=20;
+int buttonColumns=3;
+int buttonOffset=200;
+ControlFont font;
+boolean settingUp;
+
 void setup() {
-  size(800, 800);
+  size(displayWidth, displayHeight);
+  cp5 = new ControlP5(this);
+  font = new ControlFont(createFont("Times", 18));
   runConfig();
   //Let's get a Robot...
   try { 
@@ -23,7 +36,8 @@ void setup() {
     e.printStackTrace();
     exit();
   }
-  textSize(24);
+  initializeSerialController();
+    textSize(24);
 }
 
 void runConfig()
@@ -33,6 +47,7 @@ void runConfig()
   {
     println("existing apps: "+getExistingApps());
     println("existing app names: "+getAppNames());
+    setupUI();
   }
 }
 
@@ -76,10 +91,53 @@ void draw()
     text("computer name: "+computerName, 20, 100);
     text("demo directory: "+rootDir, 20, 130);
     String str="server response: "+serverResponse;
-    text(str, 100, height*3/4);
+    text(str, 100, height-90);
     str="running program: "+runningProgram;
-    text(str, 100, height*3/4+30);
-    text("press 'c' to reconfigure", 100,height-30);
+    text(str, 100, height-60);
+    text("press 'c' to reconfigure", 100, height-30);
+  }
+}
+
+void setupUI()
+{
+  settingUp=true;
+  cp5.remove("buttons");
+  buttons= cp5.addGroup("buttons");      
+  int row, col;
+  String sep=StringEscapeUtils.escapeJava(File.separator);
+  String appNames=getAppNames();
+  //  appNames+=",stop,";
+  String[] apps=appNames.split(",");
+  for (int i=0; i<apps.length; i++)
+    addButton(i, apps[i]);
+  addButton(apps.length, "stop programs");
+  settingUp=false;
+}
+
+void addButton(int i, String name)
+{
+  int margin=(width-(buttonColumns*buttonWidth + buttonColumns-1*buttonSpacing))/2;
+  int row, col;
+  println("creating button for "+name);
+  row=i/buttonColumns;
+  col=i%buttonColumns;
+  cp5.addButton(name)
+    .setValue(i)
+    .setPosition(margin+col*(buttonWidth+buttonSpacing), row*(buttonHeight+buttonSpacing) + buttonOffset  )
+    .setSize(buttonWidth, buttonHeight)
+    .setGroup(buttons)
+    .setFont(font);
+  ;
+}
+
+public void controlEvent(ControlEvent theEvent) {
+  if (!settingUp) {
+    String button=theEvent.getController().getName();
+    println("event for button "+button);
+    if (button.equals("stop programs"))
+      closeProgram(runningProgram);
+    else
+      runProgram(button);
   }
 }
 
@@ -124,14 +182,19 @@ void keyPressed()
 
 String update()
 {
-  PostRequest post = new PostRequest("http://launcher.lookingglassfactory.com/update/");
-  post.addData("name", computerName);
-  post.addData("existingApps", getAppNames());
-  post.send();
-  String serverResponse=post.getContent();
-  respondToAction(serverResponse);
-  lastUpdated=millis();
-  updating=!updating;
+  String serverResponse="";
+  try {
+    PostRequest post = new PostRequest("http://launcher.lookingglassfactory.com/update/");
+    post.addData("name", computerName);
+    post.addData("existingApps", getAppNames());
+    post.send();
+    serverResponse=post.getContent();
+    respondToAction(serverResponse);
+    lastUpdated=millis();
+    updating=!updating;
+  }
+  catch(Exception e) {
+  }
   return(serverResponse);
 }
 
@@ -176,6 +239,7 @@ void runProgram(String programName)
     }
   }
 }
+
 String getExistingApps()
 {
   StringList apps=getAllFiles(rootDir, "exe");

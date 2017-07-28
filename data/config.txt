@@ -1,2 +1,2 @@
-alex
+demo
 C:\Users\alex\Desktop\Siggraph 2017 Demos
