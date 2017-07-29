@@ -53,9 +53,11 @@ void runConfig()
 
 void draw()
 {
+  println(configured);
   background(0);
   if (!configured)
   {
+    cp5.hide();
     if (mode=="computerName")
     {
       fill(255);
@@ -82,6 +84,7 @@ void draw()
       mode="directory";
   } else
   {
+    cp5.show();
     if (millis()-lastUpdated>interval)
       serverResponse=update();
     fill(255, 0, 0);
