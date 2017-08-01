@@ -37,7 +37,7 @@ void setup() {
     exit();
   }
   initializeSerialController();
-    textSize(24);
+  textSize(24);
 }
 
 void runConfig()
@@ -53,7 +53,6 @@ void runConfig()
 
 void draw()
 {
-  println(configured);
   background(0);
   if (!configured)
   {
@@ -179,6 +178,21 @@ void keyPressed()
     {
       configured=false;
       mode="computerName";
+    } else
+    {
+      String str=""+key;
+      if (shortcuts.hasKey(str))
+      {
+        println(shortcuts.get(str));
+        String [] apps=getAppNames().split(",");
+        for (int i=0; i<apps.length; i++)
+          if (apps[i].toLowerCase().contains(shortcuts.get(str).toLowerCase()))
+          {
+            println(apps[i]);
+            runProgram(apps[i]);
+          }
+        //        str1.toLowerCase().contains(str2.toLowerCase())
+      }
     }
   }
 }
@@ -232,7 +246,7 @@ void runProgram(String programName)
       {
         println("running "+apps.get(i));
         launch(apps.get(i));
-        delay(5000);
+        delay(1500);
         //tap enter to get past the resolution popup, if it's there
         robot.keyPress(KeyEvent.VK_ENTER);
         robot.keyRelease(KeyEvent.VK_ENTER);
