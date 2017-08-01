@@ -20,6 +20,7 @@ int buttonHeight=100;
 int buttonSpacing=20;
 int buttonColumns=3;
 int buttonOffset=200;
+int maxButtonHeight=1100;
 ControlFont font;
 boolean settingUp;
 
@@ -110,6 +111,10 @@ void setupUI()
   String appNames=getAppNames();
   //  appNames+=",stop,";
   String[] apps=appNames.split(",");
+  int numRows=(apps.length+1)/buttonColumns;
+  if(numRows==0)
+    numRows=1;
+  buttonHeight=(maxButtonHeight - buttonSpacing*(numRows-1))/numRows;
   for (int i=0; i<apps.length; i++)
     addButton(i, apps[i]);
   addButton(apps.length, "stop programs");
